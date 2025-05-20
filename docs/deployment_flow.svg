@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1200" height="700" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e3f2fd"/>
+      <stop offset="100%" stop-color="#bbdefb"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8f5e9"/>
+      <stop offset="100%" stop-color="#c8e6c9"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff3e0"/>
+      <stop offset="100%" stop-color="#ffe0b2"/>
+    </linearGradient>
+    <linearGradient id="grayGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#eceff1"/>
+      <stop offset="100%" stop-color="#cfd8dc"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#bbb"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,6 L0,12 L3,6 Z" fill="#666" />
+    </marker>
+  </defs>
+  <!-- 主标题 -->
+  <text x="600" y="50" text-anchor="middle" fill="#222" font-size="32" font-weight="bold">私有化部署许可证全流程</text>
+  <!-- 分区背景 -->
+  <rect x="60" y="100" width="480" height="540" rx="32" fill="#fafdff" stroke="#90caf9" stroke-width="2"/>
+  <rect x="660" y="100" width="480" height="540" rx="32" fill="#fafdff" stroke="#90caf9" stroke-width="2"/>
+  <text x="300" y="130" text-anchor="middle" fill="#1976d2" font-size="22" font-weight="bold">平台方</text>
+  <text x="900" y="130" text-anchor="middle" fill="#43a047" font-size="22" font-weight="bold">客户方</text>
+  <!-- 平台方节点 -->
+  <rect x="140" y="180" width="340" height="60" rx="18" fill="url(#blueGrad)" stroke="#2196F3" stroke-width="2" filter="url(#shadow)"/>
+  <text x="310" y="215" text-anchor="middle" fill="#1565C0" font-size="18" font-weight="bold">生成密钥对（私钥/公钥）</text>
+  <rect x="140" y="270" width="340" height="60" rx="18" fill="url(#greenGrad)" stroke="#43a047" stroke-width="2" filter="url(#shadow)"/>
+  <text x="310" y="305" text-anchor="middle" fill="#2E7D32" font-size="18" font-weight="bold">生成许可证（含功能/用量/有效期）</text>
+  <rect x="140" y="360" width="340" height="60" rx="18" fill="url(#orangeGrad)" stroke="#fb8c00" stroke-width="2" filter="url(#shadow)"/>
+  <text x="310" y="395" text-anchor="middle" fill="#e65100" font-size="18" font-weight="bold">下发许可证和公钥给客户</text>
+  <!-- 客户方节点 -->
+  <rect x="720" y="180" width="340" height="60" rx="18" fill="url(#blueGrad)" stroke="#2196F3" stroke-width="2" filter="url(#shadow)"/>
+  <text x="890" y="215" text-anchor="middle" fill="#1565C0" font-size="18" font-weight="bold">部署微服务/校验模块/公钥/许可证</text>
+  <rect x="720" y="270" width="340" height="60" rx="18" fill="url(#greenGrad)" stroke="#43a047" stroke-width="2" filter="url(#shadow)"/>
+  <text x="890" y="305" text-anchor="middle" fill="#2E7D32" font-size="18" font-weight="bold">业务运行时本地校验许可证</text>
+  <rect x="720" y="360" width="340" height="60" rx="18" fill="url(#grayGrad)" stroke="#607d8b" stroke-width="2" filter="url(#shadow)"/>
+  <text x="890" y="395" text-anchor="middle" fill="#607d8b" font-size="18" font-weight="bold">（可选）Cython混淆/二进制保护</text>
+  <rect x="720" y="450" width="340" height="60" rx="18" fill="url(#orangeGrad)" stroke="#fb8c00" stroke-width="2" filter="url(#shadow)"/>
+  <text x="890" y="485" text-anchor="middle" fill="#e65100" font-size="18" font-weight="bold">（可选）云端定期校验/激活</text>
+  <!-- 箭头连接 -->
+  <path d="M 310 240 Q 310 270 310 270" fill="none" stroke="#2196F3" stroke-width="3" marker-end="url(#arrow)" filter="url(#shadow)"/>
+  <path d="M 310 330 Q 310 360 310 360" fill="none" stroke="#43a047" stroke-width="3" marker-end="url(#arrow)" filter="url(#shadow)"/>
+  <path d="M 480 390 Q 720 210 720 210" fill="none" stroke="#fb8c00" stroke-width="3" marker-end="url(#arrow)" filter="url(#shadow)"/>
+  <path d="M 890 240 Q 890 270 890 270" fill="none" stroke="#2196F3" stroke-width="3" marker-end="url(#arrow)" filter="url(#shadow)"/>
+  <path d="M 890 330 Q 890 360 890 360" fill="none" stroke="#43a047" stroke-width="3" marker-end="url(#arrow)" filter="url(#shadow)"/>
+  <path d="M 890 420 Q 890 450 890 450" fill="none" stroke="#607d8b" stroke-width="3" marker-end="url(#arrow)" filter="url(#shadow)"/>
+  <!-- 说明区 -->
+  <rect x="60" y="630" width="1080" height="50" rx="10" fill="#f0f0f0" stroke="#bdbdbd" stroke-width="1"/>
+  <text x="600" y="660" text-anchor="middle" fill="#666" font-size="16">
+    平台方负责生成密钥和许可证，客户方只需部署公钥和许可证，业务微服务本地校验即可。可选用Cython混淆/云端校验增强安全。
+  </text>
+</svg>
