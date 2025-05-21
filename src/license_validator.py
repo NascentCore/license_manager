@@ -1,23 +1,55 @@
 import json
 from typing import Optional
+from datetime import datetime
+import time
 
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
 from cryptography.hazmat.primitives.serialization import load_pem_public_key
 
 from license_models import License, FeatureType
+from hardware_validator import BootTimeValidator, TimeSyncValidator
+from secure_time_storage import SecureTimeStorage
 
 class LicenseValidator:
-    def __init__(self, public_key_path: str):
+    def __init__(self, public_key_path: str, secret_key: bytes):
         """初始化许可证验证器
         
         Args:
             public_key_path: 公钥文件路径
+            secret_key: 密钥
         """
-        with open(public_key_path, 'rb') as key_file:
-            self.public_key = load_pem_public_key(
-                key_file.read()
-            )
+        self.public_key = load_pem_public_key(open(public_key_path, 'rb').read())
+        # self.env_validator = KubernetesHardwareValidator()  # 暂时注释掉
+        self.boot_validator = BootTimeValidator()
+        self.time_sync = TimeSyncValidator()
+        self.time_storage = SecureTimeStorage(secret_key)
+        
+        # 初始化验证状态
+        self._initialize_validation()
+
+    def _initialize_validation(self):
+        """初始化验证状态"""
+        current_time = time.time()
+        
+        # 验证时间合理性
+        if not self.boot_validator.validate_time(current_time):
+            raise ValueError("系统时间异常：当前时间早于系统启动时间")
+            
+        if not self.time_sync.validate_time(current_time):
+            raise ValueError("系统时间异常：与时间同步源差异过大")
+            
+        # 验证时间戳存储
+        if not self.time_storage.validate_storage():
+            raise ValueError("时间戳存储验证失败")
+            
+        # 记录初始状态
+        self.initial_state = {
+            # 'env_info': self.env_validator.get_environment_info(),
+            'boot_time': self.boot_validator.boot_time,
+            'current_time': current_time,
+            'sync_sources': self.time_sync.sync_sources
+        }
 
     def validate_license(self, license_obj: License) -> bool:
         """验证许可证的有效性
@@ -28,14 +60,37 @@ class LicenseValidator:
         Returns:
             bool: 许可证是否有效
         """
-        # 检查时间有效性
-        if not license_obj.is_valid():
+        # 获取当前时间
+        current_time = time.time()
+        
+        # 验证时间合理性
+        if not self.boot_validator.validate_time(current_time):
+            return False
+            
+        if not self.time_sync.validate_time(current_time):
+            return False
+            
+        # 验证时间戳存储
+        if not self.time_storage.validate_storage():
+            return False
+            
+        # # 验证环境信息
+        # current_env = self.env_validator.get_environment_info()
+        # if not self._validate_environment(current_env):
+        #     return False
+            
+        # 验证许可证时间
+        now = datetime.fromtimestamp(current_time)
+        if not (license_obj.not_before <= now <= license_obj.not_after):
             return False
             
         # 验证签名
         if not self._verify_signature(license_obj):
             return False
             
+        # 更新时间戳
+        self.time_storage.update_timestamps()
+        
         return True
         
     def check_feature(self, license_obj: License, feature_id: str, feature_type: FeatureType) -> bool:
@@ -162,4 +217,16 @@ class LicenseValidator:
             return True
         except Exception as e:
             print('签名校验异常:', e)
-            return False 
+            return False
+
+    def _validate_environment(self, current_env: dict) -> bool:
+        """验证环境信息
+        
+        Args:
+            current_env: 当前环境信息
+            
+        Returns:
+            bool: 环境信息是否有效
+        """
+        # 暂时跳过环境验证
+        return True 

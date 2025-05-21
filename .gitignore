@@ -1,3 +1,5 @@
 licenses/
+.time_stamps/
 __pycache__
+secure_storage/
 .DS_Store

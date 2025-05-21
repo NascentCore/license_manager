@@ -5,6 +5,7 @@ from license_models import (
 )
 from license_generator import LicenseGenerator
 from license_validator import LicenseValidator
+from cryptography.fernet import Fernet
 import json
 
 def main():
@@ -32,6 +33,9 @@ def main():
             encoding=serialization.Encoding.PEM,
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         ))
+    
+    # 生成用于时间戳加密的密钥
+    secret_key = Fernet.generate_key()
     
     # 创建许可证生成器
     generator = LicenseGenerator("private_key.pem")
@@ -100,7 +104,7 @@ def main():
     )
     
     # 创建许可证验证器
-    validator = LicenseValidator("public_key.pem")
+    validator = LicenseValidator("public_key.pem", secret_key)
     
     # 调试：输出签名内容和签名
     print('签名内容:', license_obj.dump_for_sign())
@@ -149,8 +153,11 @@ def main():
 
 def test_modified_license():
     """测试修改许可证内容后的验证结果"""
+    # 生成用于时间戳加密的密钥
+    secret_key = Fernet.generate_key()
+    
     # 生成原始许可证
-    generator = LicenseGenerator("keys/private_key.pem")
+    generator = LicenseGenerator("private_key.pem")
     license_obj = generator.generate_license(
         customer_id="customer_001",
         not_before=datetime.utcnow(),
@@ -177,7 +184,7 @@ def test_modified_license():
     # 修改许可证内容
     print("\n=== 测试修改许可证内容 ===")
     print("1. 修改前验证结果：")
-    validator = LicenseValidator("keys/public_key.pem")
+    validator = LicenseValidator("public_key.pem", secret_key)
     is_valid = validator.validate_license(license_obj)
     print(f"许可证是否有效: {is_valid}")
     

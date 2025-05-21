@@ -5,6 +5,7 @@ from license_models import (
 )
 from license_generator import LicenseGenerator
 from license_validator import LicenseValidator
+from cryptography.fernet import Fernet
 
 def create_feature_license():
     """创建包含不同粒度功能许可的许可证"""
@@ -99,7 +100,8 @@ def create_feature_license():
 
 def verify_feature_permissions():
     """验证不同粒度的功能许可"""
-    validator = LicenseValidator("public_key.pem")
+    secret_key = Fernet.generate_key()
+    validator = LicenseValidator("public_key.pem", secret_key)
     license_obj = create_feature_license()
     
     # 验证API权限
