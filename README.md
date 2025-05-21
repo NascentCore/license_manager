@@ -1,5 +1,8 @@
 # 许可证管理系统
 
+## 简介
+本系统用于生成、验证和管理软件许可证，支持多种权限控制和使用限制。
+
 ## 项目结构
 ```
 license_manager/
@@ -19,11 +22,65 @@ license_manager/
 ```
 
 ## 功能特性
-- 许可证生成与签名
-- 许可证验证
-- 细粒度功能权限控制（API、微服务、UI组件、按钮等）
-- 使用限制（节点数、用户数等）
-- 许可证文件存储与管理
+- 许可证生成和签名
+- 许可证验证（签名、时间、环境）
+- 多种权限控制（API、服务、UI、按钮）
+- 使用限制管理
+- 安全时间戳存储
+- 硬件绑定（可选）
+
+## 系统要求
+- Python 3.9+
+- 依赖包：见 requirements.txt
+
+## 安装
+1. 克隆仓库
+2. 安装依赖：
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## 使用方法
+### 生成许可证
+使用 `LicenseGenerator` 生成许可证，需要提供私钥文件路径。
+```python
+from license_generator import LicenseGenerator
+generator = LicenseGenerator("private_key.pem")
+license_obj = generator.generate_license(...)
+```
+
+### 验证许可证
+使用 `LicenseValidator` 验证许可证，需要提供公钥文件路径和用于时间戳加密的密钥。
+```python
+from license_validator import LicenseValidator
+from cryptography.fernet import Fernet
+
+# 生成或加载密钥
+secret_key = Fernet.generate_key()  # 实际应用中应安全存储
+
+# 创建验证器
+validator = LicenseValidator("public_key.pem", secret_key)
+
+# 验证许可证
+is_valid = validator.validate_license(license_obj)
+```
+
+### 权限控制
+系统支持多种权限控制：
+- API权限
+- 服务权限
+- UI组件权限
+- 按钮权限
+- 使用限制
+
+## 安全说明
+- 私钥和公钥应妥善保管
+- 时间戳加密密钥应安全存储
+- 在Kubernetes环境中，可启用环境验证
+
+## 示例
+见 `example.py` 和 `feature_control_example.py`
+
 
 ## 快速开始
 
